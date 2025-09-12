@@ -53,6 +53,10 @@ body.night {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
+.app-title {
+  color: #000000; /* Black color for the heading */
+}
+
 .search-container {
   margin: 20px 0;
 }
@@ -132,10 +136,3 @@ button:hover {
   border-radius: 4px;
   margin: 10px 0;
 }
-
-
-
-
-
-
-
