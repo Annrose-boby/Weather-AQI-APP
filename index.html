@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather + Air Quality App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <h1>🌦️ Weather & Air Quality</h1>
+    
+    <!-- Search Box -->
+    <div class="search-container">
+      <input type="text" id="cityInput" placeholder="Enter city name">
+      <button onclick="getWeatherAndAQI()">Search</button>
+      <button onclick="getLocation()">📍 Use My Location</button>
+    </div>
+    
+    <!-- Weather Info -->
+    <div id="weather" class="info-card"></div>
+
+    <!-- 5-Day Forecast -->
+    <div id="forecast" class="forecast-container"></div>
+
+    <!-- AQI Info -->
+    <div id="aqi" class="info-card"></div>
+
+    <!-- Health Suggestions -->
+    <div id="healthTips" class="info-card"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
