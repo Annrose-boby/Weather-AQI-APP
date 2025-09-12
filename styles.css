@@ -2,31 +2,44 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
-  transition: background 0.5s ease;
+  transition: background 0.5s ease, color 0.5s ease;
   text-align: center;
+}
+
+/* Default theme */
+body.default {
+  background: linear-gradient(to right, #74ebd5, #ACB6E5);
   color: #333;
 }
 
-/* Default theme (sunny) */
+/* Sunny theme */
 body.sunny {
-  background: linear-gradient(to right, #ff7e5f, #feb47b);
+  background: linear-gradient(to right, #FFD700, #FFA500);
+  color: #333;
 }
 
 /* Rainy theme */
 body.rainy {
-  background: linear-gradient(to right, #616161, #9bc5c3);
-  color: #fff;
+  background: linear-gradient(to right, #2c3e50, #34495e);
+  color: #ecf0f1;
 }
 
 /* Cloudy theme */
 body.cloudy {
   background: linear-gradient(to right, #b6b6b6, #e6e6e6);
+  color: #333;
+}
+
+/* Breezy theme */
+body.breezy {
+  background: linear-gradient(to right, #87CEEB, #E0F7FA);
+  color: #333;
 }
 
 /* Night theme */
 body.night {
   background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-  color: #fff;
+  color: #ecf0f1;
 }
 
 .app {
