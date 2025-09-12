@@ -14,6 +14,15 @@
             <input type="text" id="city-input" placeholder="Enter city name">
             <button id="search-btn">Search</button>
         </div>
+        
+        <div class="theme-buttons">
+            <button class="theme-btn" data-theme="default">Default Theme</button>
+            <button class="theme-btn" data-theme="sunny">Sunny</button>
+            <button class="theme-btn" data-theme="rainy">Rainy</button>
+            <button class="theme-btn" data-theme="cloudy">Cloudy</button>
+            <button class="theme-btn" data-theme="breezy">Breezy</button>
+            <button class="theme-btn" data-theme="night">Night</button>
+        </div>
 
         <div id="weather-info" class="info-card">
             <div id="current-weather"></div>
@@ -23,7 +32,7 @@
         <h2 class="forecast-title">5 Day Forecast</h2>
         <div id="forecast" class="forecast-container"></div>
 
-        <div id="error-message" class="error" style="display: none;"></div>
+        <div id="error-message" class="error"></div>
     </div>
     <script src="script.js"></script>
 </body>
