@@ -1,125 +1,121 @@
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-  padding: 0;
-  transition: background 0.5s ease, color 0.5s ease;
-  text-align: center;
-  background: linear-gradient(to right, #3498db, #2980b9);
-  color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    transition: background 0.5s ease, color 0.5s ease;
+    text-align: center;
+    background: linear-gradient(to right, #3498db, #2980b9);
+    color: #333;
 }
 
 /* Default theme */
 body.default {
-  background: linear-gradient(to right, #3498db, #2980b9);
-  color: #3498db;
+    background: linear-gradient(to right, #3498db, #2980b9);
+    color: #3498db;
 }
 
 /* Sunny theme */
 body.sunny {
-  background: linear-gradient(to right, #FFD700, #FFA500);
-  color: #333;
+    background: linear-gradient(to right, #FFD700, #FFA500);
+    color: #333;
 }
 
 /* Rainy theme */
 body.rainy {
-  background: linear-gradient(to right, #2c3e50, #34495e);
-  color: #ecf0f1;
+    background: linear-gradient(to right, #2c3e50, #34495e);
+    color: #ecf0f1;
 }
 
 /* Cloudy theme */
 body.cloudy {
-  background: linear-gradient(to right, #b6b6b6, #e6e6e6);
-  color: #333;
+    background: linear-gradient(to right, #b6b6b6, #e6e6e6);
+    color: #333;
 }
 
 /* Breezy theme */
 body.breezy {
-  background: linear-gradient(to right, #87CEEB, #E0F7FA);
-  color: #333;
+    background: linear-gradient(to right, #87CEEB, #E0F7FA);
+    color: #333;
 }
 
 /* Night theme */
 body.night {
-  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-  color: #ecf0f1;
+    background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+    color: #ecf0f1;
 }
 
 .app {
-  margin: 20px auto;
-  max-width: 800px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    margin: 20px auto;
+    max-width: 800px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
-.app-title {
-  color: #000000; /* Changed to black */
-}
-
-.forecast-title {
-  color: #000000; /* Added black color for forecast title */
-  margin-top: 30px;
+/* FIXED: Title colors set to black */
+.app-title, .forecast-title {
+    color: #000000 !important; /* Changed to black with important to override any other styles */
 }
 
 .search-container {
-  margin: 20px 0;
+    margin: 20px 0;
 }
 
 input[type="text"] {
-  padding: 10px;
-  width: 200px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-right: 10px;
+    padding: 10px;
+    width: 200px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 10px;
 }
 
 button {
-  padding: 10px 15px;
-  background: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin: 5px;
-  transition: background 0.3s;
+    padding: 10px 15px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 5px;
+    transition: background 0.3s;
 }
 
 button:hover {
-  background: #45a049;
+    background: #45a049;
 }
 
 .info-card {
-  margin-top: 20px;
-  padding: 15px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  color: #2c3e50;
+    margin-top: 20px;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    color: #2c3e50;
 }
 
 .forecast-container {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-top: 20px;
 }
 
 .forecast-day {
-  flex: 1;
-  min-width: 120px;
-  margin: 10px;
-  padding: 15px;
-  background: lightblue;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  color: #2c3e50;
+    flex: 1;
+    min-width: 120px;
+    margin: 10px;
+    padding: 15px;
+    background: lightblue;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    color: #2c3e50;
 }
 
 .aqi-value {
-  font-size: 24px;
-  font-weight: bold;
-  margin: 10px 0;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 10px 0;
 }
 
 .good { color: green; }
@@ -130,14 +126,27 @@ button:hover {
 .hazardous { color: maroon; }
 
 .loading {
-  opacity: 0.5;
-  pointer-events: none;
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 .error {
-  color: red;
-  background: #ffebee;
-  padding: 10px;
-  border-radius: 4px;
-  margin: 10px 0;
+    color: red;
+    background: #ffebee;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+    display: none;
+}
+
+.theme-buttons {
+    margin: 15px 0;
+}
+
+.theme-btn {
+    background: #6c757d !important;
+}
+
+.theme-btn:hover {
+    background: #5a6268 !important;
 }
