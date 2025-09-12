@@ -6,12 +6,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const forecastDiv = document.getElementById('forecast');
     const errorDiv = document.getElementById('error-message');
     const body = document.body;
+    const themeButtons = document.querySelectorAll('.theme-btn');
 
+    // Add event listeners
     searchBtn.addEventListener('click', searchWeather);
     cityInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             searchWeather();
         }
+    });
+    
+    // Theme buttons functionality
+    themeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const theme = this.getAttribute('data-theme');
+            changeTheme(theme);
+        });
     });
 
     function searchWeather() {
@@ -19,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (city === '') return;
 
         // Clear previous results
-        errorDiv.style.display = 'none';
+        hideError();
         currentWeatherDiv.innerHTML = '';
         airQualityDiv.innerHTML = '';
         forecastDiv.innerHTML = '';
@@ -39,6 +49,14 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
+    function changeTheme(theme) {
+        // Remove all theme classes
+        body.classList.remove('default', 'sunny', 'rainy', 'cloudy', 'breezy', 'night');
+        
+        // Add the selected theme
+        body.classList.add(theme);
+    }
+
     async function fetchWeatherData(city) {
         // This would be replaced with actual API calls
         // For demonstration, we'll use mock data
@@ -48,18 +66,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 const mockData = {
                     city: city,
                     current: {
-                        temp: 22,
-                        condition: 'Sunny',
-                        humidity: 65,
-                        wind: 12
+                        temp: Math.round(Math.random() * 30 + 5),
+                        condition: ['Sunny', 'Rainy', 'Cloudy', 'Breezy', 'Night'][Math.floor(Math.random() * 5)],
+                        humidity: Math.round(Math.random() * 100),
+                        wind: Math.round(Math.random() * 30)
                     },
-                    aqi: 45,
+                    aqi: Math.round(Math.random() * 300),
                     forecast: [
-                        { day: 'Mon', temp: 22, condition: 'Sunny' },
-                        { day: 'Tue', temp: 20, condition: 'Cloudy' },
-                        { day: 'Wed', temp: 18, condition: 'Rainy' },
-                        { day: 'Thu', temp: 21, condition: 'Breezy' },
-                        { day: 'Fri', temp: 19, condition: 'Cloudy' }
+                        { day: 'Mon', temp: Math.round(Math.random() * 30 + 5), condition: 'Sunny' },
+                        { day: 'Tue', temp: Math.round(Math.random() * 30 + 5), condition: 'Cloudy' },
+                        { day: 'Wed', temp: Math.round(Math.random() * 30 + 5), condition: 'Rainy' },
+                        { day: 'Thu', temp: Math.round(Math.random() * 30 + 5), condition: 'Breezy' },
+                        { day: 'Fri', temp: Math.round(Math.random() * 30 + 5), condition: 'Night' }
                     ]
                 };
                 
@@ -75,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateWeatherUI(data) {
         // Update theme based on condition
-        updateTheme(data.current.condition);
+        changeTheme(data.current.condition.toLowerCase());
         
         // Display current weather
         currentWeatherDiv.innerHTML = `
@@ -106,27 +124,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function updateTheme(condition) {
-        // Remove all theme classes
-        body.classList.remove('default', 'sunny', 'rainy', 'cloudy', 'breezy', 'night');
-        
-        // Add appropriate theme based on condition
-        const conditionLower = condition.toLowerCase();
-        if (conditionLower.includes('sun')) {
-            body.classList.add('sunny');
-        } else if (conditionLower.includes('rain')) {
-            body.classList.add('rainy');
-        } else if (conditionLower.includes('cloud')) {
-            body.classList.add('cloudy');
-        } else if (conditionLower.includes('breeze')) {
-            body.classList.add('breezy');
-        } else if (conditionLower.includes('night')) {
-            body.classList.add('night');
-        } else {
-            body.classList.add('default');
-        }
-    }
-
     function getAqiLevel(aqi) {
         if (aqi <= 50) return { class: 'good', text: 'Good' };
         if (aqi <= 100) return { class: 'fair', text: 'Fair' };
@@ -139,5 +136,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function showError(message) {
         errorDiv.textContent = message;
         errorDiv.style.display = 'block';
+    }
+
+    function hideError() {
+        errorDiv.style.display = 'none';
     }
 });
