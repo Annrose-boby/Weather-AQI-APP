@@ -114,6 +114,7 @@ button:hover {
 }
 
 .good { color: green; }
+.fair { color: Blue; }
 .moderate { color: orange; }
 .unhealthy { color: red; }
 .very-unhealthy { color: purple; }
@@ -131,3 +132,4 @@ button:hover {
   border-radius: 4px;
   margin: 10px 0;
 }
+
