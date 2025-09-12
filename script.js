@@ -1,269 +1,143 @@
-// API Keys - Replace with your actual API keys
-const weatherApiKey = "885c3ebb634376afb234c9fbcd22e4fd";
-// Note: For AQI, you'll need to sign up for a service like IQAir and get an API key
+document.addEventListener('DOMContentLoaded', function() {
+    const searchBtn = document.getElementById('search-btn');
+    const cityInput = document.getElementById('city-input');
+    const currentWeatherDiv = document.getElementById('current-weather');
+    const airQualityDiv = document.getElementById('air-quality');
+    const forecastDiv = document.getElementById('forecast');
+    const errorDiv = document.getElementById('error-message');
+    const body = document.body;
 
-// Fetch Weather + AQI
-async function getWeatherAndAQI() {
-  let city = document.getElementById("cityInput").value || "Delhi";
-  
-  // Show loading state
-  document.body.classList.add('loading');
-  
-  try {
-    // Weather API
-    let weatherRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${weatherApiKey}&units=metric`);
-    if (!weatherRes.ok) throw new Error('City not found');
-    let weatherData = await weatherRes.json();
-    
-    // Get forecast data
-    let forecastRes = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${weatherApiKey}&units=metric`);
-    let forecastData = await forecastRes.json();
-    
-    // For AQI, we'll use OpenWeatherMap's air pollution API
-    // Note: This requires coordinates, so we'll use the weather data's coordinates
-    const { lat, lon } = weatherData.coord;
-    let aqiRes = await fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${weatherApiKey}`);
-    let aqiData = await aqiRes.json();
-    
-    displayData(weatherData, forecastData, aqiData);
-    updateTheme(weatherData.weather[0].main, weatherData.wind.speed);
-  } catch (error) {
-    showError(error.message);
-  } finally {
-    document.body.classList.remove('loading');
-  }
-}
+    searchBtn.addEventListener('click', searchWeather);
+    cityInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchWeather();
+        }
+    });
 
-// Display Data
-function displayData(weather, forecast, aqi) {
-  // Display current weather
-  document.getElementById("weather").innerHTML = `
-    <h3>Weather in ${weather.name}, ${weather.sys.country}</h3>
-    <p>🌡️ Temp: ${weather.main.temp}°C (Feels like ${weather.main.feels_like}°C)</p>
-    <p>💧 Humidity: ${weather.main.humidity}%</p>
-    <p>🌬️ Wind: ${weather.wind.speed} m/s</p>
-    <p>🌤️ Condition: ${weather.weather[0].main} - ${weather.weather[0].description}</p>
-  `;
-  
-  // Display 5-day forecast
-  const forecastContainer = document.getElementById("forecast");
-  forecastContainer.innerHTML = "<h3>5-Day Forecast</h3>";
-  
-  // Group forecast by day (API returns data for every 3 hours)
-  const dailyForecast = {};
-  forecast.list.forEach(item => {
-    const date = new Date(item.dt * 1000);
-    const day = date.toDateString();
-    
-    if (!dailyForecast[day]) {
-      dailyForecast[day] = {
-        temps: [],
-        conditions: [],
-        date: date
-      };
+    function searchWeather() {
+        const city = cityInput.value.trim();
+        if (city === '') return;
+
+        // Clear previous results
+        errorDiv.style.display = 'none';
+        currentWeatherDiv.innerHTML = '';
+        airQualityDiv.innerHTML = '';
+        forecastDiv.innerHTML = '';
+
+        // Show loading state
+        body.classList.add('loading');
+
+        // Fetch weather data
+        fetchWeatherData(city)
+            .then(data => {
+                updateWeatherUI(data);
+                body.classList.remove('loading');
+            })
+            .catch(error => {
+                showError(error.message);
+                body.classList.remove('loading');
+            });
     }
-    
-    dailyForecast[day].temps.push(item.main.temp);
-    dailyForecast[day].conditions.push(item.weather[0].main);
-  });
-  
-  // Display forecast for next 5 days
-  let count = 0;
-  for (const day in dailyForecast) {
-    if (count >= 5) break;
-    
-    const dayData = dailyForecast[day];
-    const avgTemp = (dayData.temps.reduce((a, b) => a + b, 0) / dayData.temps.length).toFixed(1);
-    const mostCommonCondition = getMostCommon(dayData.conditions);
-    
-    const forecastDay = document.createElement("div");
-    forecastDay.className = "forecast-day";
-    forecastDay.innerHTML = `
-      <h4>${dayData.date.toLocaleDateString('en-US', { weekday: 'short' })}</h4>
-      <p>${mostCommonCondition}</p>
-      <p>${avgTemp}°C</p>
-    `;
-    
-    forecastContainer.appendChild(forecastDay);
-    count++;
-  }
-  
-  // Display AQI data
-  const aqiVal = aqi.list[0].main.aqi;
-  const pollutants = aqi.list[0].components;
-  
-  let aqiLevel, health;
-  switch(aqiVal) {
-    case 1:
-      aqiLevel = "Good";
-      health = "✅ Good – Air quality is satisfactory, and air pollution poses little or no risk.";
-      break;
-    case 2:
-      aqiLevel = "Fair";
-      health = "🙂 Fair – Air quality is acceptable. However, there may be a risk for some people.";
-      break;
-    case 3:
-      aqiLevel = "Moderate";
-      health = "⚠️ Moderate – Members of sensitive groups may experience health effects.";
-      break;
-    case 4:
-      aqiLevel = "Poor";
-      health = "🚫 Poor – Some members of the general public may experience health effects.";
-      break;
-    case 5:
-      aqiLevel = "Very Poor";
-      health = "❌ Very Poor – Health alert: The risk of health effects is increased for everyone.";
-      break;
-    default:
-      aqiLevel = "Unknown";
-      health = "Data not available";
-  }
-  
-  document.getElementById("aqi").innerHTML = `
-    <h3>Air Quality Index</h3>
-    <p class="aqi-value ${aqiLevel.toLowerCase().replace(' ', '-')}">${aqiVal} - ${aqiLevel}</p>
-    <p>PM2.5: ${pollutants.pm2_5} μg/m³</p>
-    <p>PM10: ${pollutants.pm10} μg/m³</p>
-    <p>CO: ${pollutants.co} μg/m³</p>
-    <p>NO₂: ${pollutants.no2} μg/m³</p>
-    <p>O₃: ${pollutants.o3} μg/m³</p>
-    <p>SO₂: ${pollutants.so2} μg/m³</p>
-  `;
-  
-  // Display health tips
-  document.getElementById("healthTips").innerHTML = `
-    <h3>Health Recommendations</h3>
-    <p>${health}</p>
-    ${getHealthTips(aqiVal, weather.weather[0].main)}
-  `;
-}
 
-// Get most common value in array
-function getMostCommon(arr) {
-  return arr.sort((a, b) =>
-    arr.filter(v => v === a).length - arr.filter(v => v === b).length
-  ).pop();
-}
+    async function fetchWeatherData(city) {
+        // This would be replaced with actual API calls
+        // For demonstration, we'll use mock data
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                // Simulate API response
+                const mockData = {
+                    city: city,
+                    current: {
+                        temp: 22,
+                        condition: 'Sunny',
+                        humidity: 65,
+                        wind: 12
+                    },
+                    aqi: 45,
+                    forecast: [
+                        { day: 'Mon', temp: 22, condition: 'Sunny' },
+                        { day: 'Tue', temp: 20, condition: 'Cloudy' },
+                        { day: 'Wed', temp: 18, condition: 'Rainy' },
+                        { day: 'Thu', temp: 21, condition: 'Breezy' },
+                        { day: 'Fri', temp: 19, condition: 'Cloudy' }
+                    ]
+                };
+                
+                // Randomly reject to simulate errors
+                if (Math.random() > 0.2) {
+                    resolve(mockData);
+                } else {
+                    reject(new Error('City not found. Please try again.'));
+                }
+            }, 1000);
+        });
+    }
 
-// Get health tips based on AQI and weather
-function getHealthTips(aqi, weather) {
-  let tips = "";
-  
-  // AQI-based tips
-  if (aqi >= 4) {
-    tips += "<p>• Wear a mask outdoors</p>";
-    tips += "<p>• Avoid prolonged outdoor exertion</p>";
-    tips += "<p>• Keep windows closed</p>";
-  } else if (aqi >= 3) {
-    tips += "<p>• Sensitive groups should reduce outdoor activities</p>";
-  }
-  
-  // Weather-based tips
-  if (weather.includes("Rain")) {
-    tips += "<p>• Carry an umbrella</p>";
-  } else if (weather.includes("Snow")) {
-    tips += "<p>• Drive carefully, roads may be slippery</p>";
-  } else if (weather.includes("Clear")) {
-    tips += "<p>• Apply sunscreen if going outside</p>";
-  } else if (weather.includes("Extreme")) {
-    tips += "<p>• Avoid outdoor activities</p>";
-  }
-  
-  return tips;
-}
+    function updateWeatherUI(data) {
+        // Update theme based on condition
+        updateTheme(data.current.condition);
+        
+        // Display current weather
+        currentWeatherDiv.innerHTML = `
+            <h2>Current Weather in ${data.city}</h2>
+            <p>Temperature: ${data.current.temp}°C</p>
+            <p>Condition: ${data.current.condition}</p>
+            <p>Humidity: ${data.current.humidity}%</p>
+            <p>Wind: ${data.current.wind} km/h</p>
+        `;
+        
+        // Display air quality
+        const aqiLevel = getAqiLevel(data.aqi);
+        airQualityDiv.innerHTML = `
+            <h2>Air Quality</h2>
+            <p class="aqi-value ${aqiLevel.class}">${data.aqi} - ${aqiLevel.text}</p>
+        `;
+        
+        // Display forecast
+        data.forecast.forEach(day => {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'forecast-day';
+            dayElement.innerHTML = `
+                <h3>${day.day}</h3>
+                <p>${day.temp}°C</p>
+                <p>${day.condition}</p>
+            `;
+            forecastDiv.appendChild(dayElement);
+        });
+    }
 
-// Update theme based on weather condition and wind speed
-function updateTheme(weatherCondition, windSpeed) {
-  document.body.className = "";
-  
-  if (weatherCondition.includes("Clear")) {
-    const hours = new Date().getHours();
-    document.body.classList.add(hours > 6 && hours < 20 ? 'sunny' : 'night');
-  } else if (weatherCondition.includes("Rain") || weatherCondition.includes("Drizzle")) {
-    document.body.classList.add('rainy');
-  } else if (weatherCondition.includes("Cloud") || weatherCondition.includes("Fog")) {
-    document.body.classList.add('cloudy');
-  } else if (windSpeed > 5) { // Breezy condition (wind speed > 5 m/s)
-    document.body.classList.add('breezy');
-  } else {
-    document.body.classList.add('default');
-  }
-}
+    function updateTheme(condition) {
+        // Remove all theme classes
+        body.classList.remove('default', 'sunny', 'rainy', 'cloudy', 'breezy', 'night');
+        
+        // Add appropriate theme based on condition
+        const conditionLower = condition.toLowerCase();
+        if (conditionLower.includes('sun')) {
+            body.classList.add('sunny');
+        } else if (conditionLower.includes('rain')) {
+            body.classList.add('rainy');
+        } else if (conditionLower.includes('cloud')) {
+            body.classList.add('cloudy');
+        } else if (conditionLower.includes('breeze')) {
+            body.classList.add('breezy');
+        } else if (conditionLower.includes('night')) {
+            body.classList.add('night');
+        } else {
+            body.classList.add('default');
+        }
+    }
 
-// Get user's location
-function getLocation() {
-  if (navigator.geolocation) {
-    document.body.classList.add('loading');
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        getWeatherByCoords(position.coords.latitude, position.coords.longitude);
-      },
-      error => {
-        showError("Location access denied. Please enter a city name manually.");
-        document.body.classList.remove('loading');
-      }
-    );
-  } else {
-    showError("Geolocation is not supported by this browser.");
-  }
-}
+    function getAqiLevel(aqi) {
+        if (aqi <= 50) return { class: 'good', text: 'Good' };
+        if (aqi <= 100) return { class: 'fair', text: 'Fair' };
+        if (aqi <= 150) return { class: 'moderate', text: 'Moderate' };
+        if (aqi <= 200) return { class: 'unhealthy', text: 'Unhealthy' };
+        if (aqi <= 300) return { class: 'very-unhealthy', text: 'Very Unhealthy' };
+        return { class: 'hazardous', text: 'Hazardous' };
+    }
 
-// Get weather by coordinates
-async function getWeatherByCoords(lat, lon) {
-  try {
-    // Weather API
-    let weatherRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${weatherApiKey}&units=metric`);
-    let weatherData = await weatherRes.json();
-    
-    // Get forecast data
-    let forecastRes = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${weatherApiKey}&units=metric`);
-    let forecastData = await forecastRes.json();
-    
-    // Get AQI data
-    let aqiRes = await fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${weatherApiKey}`);
-    let aqiData = await aqiRes.json();
-    
-    displayData(weatherData, forecastData, aqiData);
-    updateTheme(weatherData.weather[0].main, weatherData.wind.speed);
-    
-    // Update city input with detected location
-    document.getElementById("cityInput").value = weatherData.name;
-  } catch (error) {
-    showError("Failed to get weather data for your location.");
-  } finally {
-    document.body.classList.remove('loading');
-  }
-}
-
-// Show error message
-function showError(message) {
-  // Remove any existing errors
-  const existingErrors = document.querySelectorAll('.error');
-  existingErrors.forEach(error => error.remove());
-  
-  // Create error element
-  const errorEl = document.createElement('div');
-  errorEl.className = 'error';
-  errorEl.textContent = message;
-  
-  // Insert after search container
-  const searchContainer = document.querySelector('.search-container');
-  searchContainer.parentNode.insertBefore(errorEl, searchContainer.nextSibling);
-  
-  // Remove error after 5 seconds
-  setTimeout(() => {
-    errorEl.remove();
-  }, 5000);
-}
-
-// Allow pressing Enter to search
-document.getElementById("cityInput").addEventListener("keypress", function(event) {
-  if (event.key === "Enter") {
-    getWeatherAndAQI();
-  }
+    function showError(message) {
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+    }
 });
-
-// Initialize with default city
-window.onload = function() {
-  getWeatherAndAQI();
-};
