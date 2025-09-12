@@ -120,6 +120,7 @@ button:hover {
 .good { color: green; }
 .fair { color: blue; }
 .moderate { color: orange; }
+.moderate { color: red; }
 .unhealthy { color: red; }
 .very-unhealthy { color: purple; }
 .hazardous { color: maroon; }
@@ -136,6 +137,7 @@ button:hover {
   border-radius: 4px;
   margin: 10px 0;
 }
+
 
 
 
