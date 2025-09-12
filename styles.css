@@ -1,15 +1,18 @@
+/* Import Poppins font (similar to Bobo Normal) */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Poppins', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
   transition: background 0.5s ease, color 0.5s ease;
   text-align: center;
 }
 
-/* Default theme */
+/* Default theme - Blue */
 body.default {
-  background: linear-gradient(to right, #74ebd5, #ACB6E5);
-  color: #333;
+  background: linear-gradient(to right, #3498db, #2c3e50);
+  color: #ecf0f1;
 }
 
 /* Sunny theme */
@@ -44,7 +47,7 @@ body.night {
 
 .app {
   margin: 20px auto;
-  max-width: 800px;
+  max-width: 900px;
   padding: 20px;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 12px;
@@ -61,21 +64,23 @@ input[type="text"] {
   border: 1px solid #ddd;
   border-radius: 4px;
   margin-right: 10px;
+  font-family: 'Poppins', sans-serif;
 }
 
 button {
   padding: 10px 15px;
-  background: #4CAF50;
+  background: #3498db;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   margin: 5px;
   transition: background 0.3s;
+  font-family: 'Poppins', sans-serif;
 }
 
 button:hover {
-  background: #45a049;
+  background: #2980b9;
 }
 
 .info-card {
@@ -84,23 +89,50 @@ button:hover {
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  color: #2c3e50;
 }
 
-.forecast-container {
+.calendar-header {
+  margin-top: 30px;
+  color: #ecf0f1;
+}
+
+.calendar-container {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  margin-top: 20px;
+  margin-top: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 15px;
 }
 
-.forecast-day {
+.calendar-day {
   flex: 1;
-  min-width: 120px;
+  min-width: 150px;
   margin: 10px;
   padding: 15px;
   background: white;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: #2c3e50;
+  transition: transform 0.3s;
+}
+
+.calendar-day:hover {
+  transform: translateY(-5px);
+}
+
+.calendar-date {
+  font-weight: 600;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.weather-icon {
+  font-size: 2rem;
+  margin: 10px 0;
 }
 
 .aqi-value {
@@ -109,11 +141,11 @@ button:hover {
   margin: 10px 0;
 }
 
-.good { color: green; }
-.moderate { color: orange; }
-.unhealthy { color: red; }
-.very-unhealthy { color: purple; }
-.hazardous { color: maroon; }
+.good { color: #27ae60; }
+.moderate { color: #f39c12; }
+.unhealthy { color: #e74c3c; }
+.very-unhealthy { color: #9b59b6; }
+.hazardous { color: #7f8c8d; }
 
 .loading {
   opacity: 0.5;
@@ -121,9 +153,10 @@ button:hover {
 }
 
 .error {
-  color: red;
+  color: #e74c3c;
   background: #ffebee;
   padding: 10px;
   border-radius: 4px;
   margin: 10px 0;
+  font-weight: 500;
 }
