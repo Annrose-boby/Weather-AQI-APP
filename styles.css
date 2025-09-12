@@ -55,7 +55,7 @@ body.night {
 
 /* FIXED: Title colors set to black */
 .app-title, .forecast-title {
-    color: #000000 !important; /* Changed to black with important to override any other styles */
+    color: #8B0000 !important; /* Changed to black with important to override any other styles */
 }
 
 .search-container {
@@ -121,6 +121,7 @@ button:hover {
 .good { color: green; }
 .fair { color: blue; }
 .moderate { color: orange; }
+.poor { color: red; }
 .unhealthy { color: red; }
 .very-unhealthy { color: purple; }
 .hazardous { color: maroon; }
@@ -150,3 +151,4 @@ button:hover {
 .theme-btn:hover {
     background: #5a6268 !important;
 }
+
