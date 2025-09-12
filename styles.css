@@ -54,7 +54,12 @@ body.night {
 }
 
 .app-title {
-  color: #00008B; /* Blue color for the heading */
+  color: #000000; /* Changed to black */
+}
+
+.forecast-title {
+  color: #000000; /* Added black color for forecast title */
+  margin-top: 30px;
 }
 
 .search-container {
@@ -120,7 +125,6 @@ button:hover {
 .good { color: green; }
 .fair { color: blue; }
 .moderate { color: orange; }
-.moderate { color: red; }
 .unhealthy { color: red; }
 .very-unhealthy { color: purple; }
 .hazardous { color: maroon; }
@@ -137,8 +141,3 @@ button:hover {
   border-radius: 4px;
   margin: 10px 0;
 }
-
-
-
-
-
