@@ -1,5 +1,6 @@
 // API Keys - Replace with your actual API keys
 const weatherApiKey = "885c3ebb634376afb234c9fbcd22e4fd";
+// Note: For AQI, you'll need to sign up for a service like IQAir and get an API key
 
 // Fetch Weather + AQI
 async function getWeatherAndAQI() {
@@ -19,6 +20,7 @@ async function getWeatherAndAQI() {
     let forecastData = await forecastRes.json();
     
     // For AQI, we'll use OpenWeatherMap's air pollution API
+    // Note: This requires coordinates, so we'll use the weather data's coordinates
     const { lat, lon } = weatherData.coord;
     let aqiRes = await fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${weatherApiKey}`);
     let aqiData = await aqiRes.json();
@@ -40,12 +42,12 @@ function displayData(weather, forecast, aqi) {
     <p>🌡️ Temp: ${weather.main.temp}°C (Feels like ${weather.main.feels_like}°C)</p>
     <p>💧 Humidity: ${weather.main.humidity}%</p>
     <p>🌬️ Wind: ${weather.wind.speed} m/s</p>
-    <p>${getWeatherIcon(weather.weather[0].main)} Condition: ${weather.weather[0].main} - ${weather.weather[0].description}</p>
+    <p>🌤️ Condition: ${weather.weather[0].main} - ${weather.weather[0].description}</p>
   `;
   
-  // Display 5-day forecast in calendar format
+  // Display 5-day forecast
   const forecastContainer = document.getElementById("forecast");
-  forecastContainer.innerHTML = "";
+  forecastContainer.innerHTML = "<h3>5-Day Forecast</h3>";
   
   // Group forecast by day (API returns data for every 3 hours)
   const dailyForecast = {};
@@ -57,35 +59,29 @@ function displayData(weather, forecast, aqi) {
       dailyForecast[day] = {
         temps: [],
         conditions: [],
-        icons: [],
         date: date
       };
     }
     
     dailyForecast[day].temps.push(item.main.temp);
     dailyForecast[day].conditions.push(item.weather[0].main);
-    dailyForecast[day].icons.push(getWeatherIcon(item.weather[0].main));
   });
   
-  // Display forecast for next 5 days in calendar format
+  // Display forecast for next 5 days
   let count = 0;
   for (const day in dailyForecast) {
     if (count >= 5) break;
     
     const dayData = dailyForecast[day];
-    const minTemp = Math.min(...dayData.temps).toFixed(1);
-    const maxTemp = Math.max(...dayData.temps).toFixed(1);
+    const avgTemp = (dayData.temps.reduce((a, b) => a + b, 0) / dayData.temps.length).toFixed(1);
     const mostCommonCondition = getMostCommon(dayData.conditions);
-    const mostCommonIcon = getMostCommon(dayData.icons);
     
     const forecastDay = document.createElement("div");
-    forecastDay.className = "calendar-day";
+    forecastDay.className = "forecast-day";
     forecastDay.innerHTML = `
-      <div class="calendar-date">${dayData.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
-      <div class="weather-icon">${mostCommonIcon}</div>
+      <h4>${dayData.date.toLocaleDateString('en-US', { weekday: 'short' })}</h4>
       <p>${mostCommonCondition}</p>
-      <p>H: ${maxTemp}°C</p>
-      <p>L: ${minTemp}°C</p>
+      <p>${avgTemp}°C</p>
     `;
     
     forecastContainer.appendChild(forecastDay);
@@ -140,28 +136,6 @@ function displayData(weather, forecast, aqi) {
     <p>${health}</p>
     ${getHealthTips(aqiVal, weather.weather[0].main)}
   `;
-}
-
-// Get weather icon based on condition
-function getWeatherIcon(condition) {
-  switch(condition.toLowerCase()) {
-    case 'clear': return '☀️';
-    case 'clouds': return '☁️';
-    case 'rain': return '🌧️';
-    case 'drizzle': return '🌦️';
-    case 'thunderstorm': return '⛈️';
-    case 'snow': return '❄️';
-    case 'mist': 
-    case 'smoke': 
-    case 'haze': 
-    case 'dust': 
-    case 'fog': 
-    case 'sand': 
-    case 'ash': return '🌫️';
-    case 'squall': 
-    case 'tornado': return '🌪️';
-    default: return '🌤️';
-  }
 }
 
 // Get most common value in array
@@ -278,4 +252,18 @@ function showError(message) {
   
   // Remove error after 5 seconds
   setTimeout(() => {
-    error
+    errorEl.remove();
+  }, 5000);
+}
+
+// Allow pressing Enter to search
+document.getElementById("cityInput").addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    getWeatherAndAQI();
+  }
+});
+
+// Initialize with default city
+window.onload = function() {
+  getWeatherAndAQI();
+};
