@@ -54,7 +54,7 @@ body.night {
 }
 
 .app-title {
-  color: #000000; /* Black color for the heading */
+  color: #00008B; /* Blue color for the heading */
 }
 
 .search-container {
@@ -136,3 +136,4 @@ button:hover {
   border-radius: 4px;
   margin: 10px 0;
 }
+
